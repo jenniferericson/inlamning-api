@@ -1,6 +1,9 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const port = 3000; //radiofrekvens
+
+app.use(cors());
 
 const products = [{
     name: "Hyal Reyouth Toner",
@@ -68,7 +71,7 @@ const products = [{
 ];
 
 
-app.get("/products",(req,res) => {
+app.get("/api/products",(req,res) => {
     res.json(products)
 });
 
