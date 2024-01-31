@@ -3,6 +3,8 @@ const cors = require("cors");
 const app = express();
 const port = 3000; //radiofrekvens
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.json());
 app.use(cors());
 
 const products = [{
@@ -70,9 +72,62 @@ const products = [{
 },
 ];
 
-
 app.get("/api/products",(req,res) => {
+    //hämta alla produkter
     res.json(products)
+});
+
+app.get("/api/products/:productId",(req,res) => {
+    //hämta en produkt
+    let product = products.find(product => product.id == req.params.productId);
+    if (product == undefined){
+        res.status(404).send("not found");
+    }
+    res.json(product)
+});
+
+function getNextId(){
+    let m = Math.max(...products.map(product => product.id))
+    return m + 1
+}
+
+app.post("/api/products",(req,res) => {
+    //skapa nytt objekt
+    const product = {
+        name : req.body.name,
+        brand: req.body.brand,
+        price: req.body.price,
+        rating: req.body.rating,
+        id:getNextId()
+    }
+    products.push(product)
+
+    res.status(201).send("Created");
+});
+
+app.delete('/api/products/:productId',(req,res)=>{
+    //radera
+    let product = products.find(product => product.id == req.params.productId);
+    if (product == undefined){
+        res.status(404).send("not found");
+    }
+    
+    products.splice(products.indexOf(product),1)
+    res.status(204).send("")
+});
+
+app.put('/api/products/:productId',(req,res)=>{
+    //updatera
+    let product = products.find(product => product.id == req.params.productId);
+    if (product == undefined){
+        res.status(404).send("not found");
+    }
+    product.name = req.body.name,
+    product.brand = req.body.brand,
+    product.price = req.body.price,
+    product.rating = req.body.rating
+    
+    res.status(204).send("Changed");
 });
 
 
