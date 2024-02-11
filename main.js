@@ -3,6 +3,9 @@ const cors = require("cors");
 const app = express();
 const port = 3000; //radiofrekvens
 
+const { sequelize, Employee } = require('./models');
+const migrationhelper = require('./migrationhelper');
+
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(cors());
@@ -131,6 +134,8 @@ app.put('/api/products/:productId',(req,res)=>{
 });
 
 
-app.listen(port,() => {
-    console.log(`Example app listening on port ${port}`);
+app.listen(port, async () => {
+    await migrationhelper.migrate()
+    await sequelize.authenticate()
+    console.log(`Example app listening2 on port ${port}`)
 });
