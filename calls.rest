@@ -12,11 +12,10 @@ POST  http://localhost:3000/api/products
 Content-Type: application/json; charset=utf-8
 
 {
-    "name": "Safe Me Relief Moisture Cleansing Oil",
-    "brand": "Make P:rem",
-    "price": "329kr",
-    "rating": 3.5,
-    "id": 10
+    "name": "name",
+    "brand": "brand",
+    "price": "price",
+    "rating": "rating"
 }
 
 ### Update
@@ -28,11 +27,9 @@ Content-Type: application/json; charset=utf-8
     "brand": "Klairs",
     "price": "399kr",
     "rating": 4.5,
-    "id": 2
 }
 
 ### Delete
-DELETE   http://localhost:3000/api/products/2
+DELETE   http://localhost:3000/api/products/4
 Content-Type: application/json; charset=utf-8
-
 
