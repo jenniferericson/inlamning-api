@@ -10,11 +10,28 @@ app.use(express.json());
 app.use(cors());
 
 
-app.get("/api/products",async (req,res) => {
+app.get("/api/products", async (req,res) => {
 
-    let products = await Product.findAll();
+    const sortCol =  req.query.sortCol || 'name';
+    const sortOrder =  req.query.sortOrder || 'asc';
+
+    let products = await Product.findAll({
+        order: [ 
+            [sortCol, sortOrder]
+        ]
+    });
+        
+    const result = products.map (p=> {
+        return {
+        id:p.id,
+        name:p.name,
+        brand:p.brand,
+        price:p.price,
+        rating:p.rating
+        };
+    });
   
-     res.json(products);
+    return res.json(result);
 });
 
 
