@@ -5,12 +5,13 @@ const port = 3000;
 
 const { sequelize, Product } = require('./models');
 const migrationhelper = require('./migrationhelper');
+const { validateInputValues } = require("./validators/inputValidator");
 
 app.use(express.json());
 app.use(cors());
 
 
-app.get("/api/products", async (req,res) => {
+app.get("/api/products",async (req,res) => {
 
     const sortCol =  req.query.sortCol || 'name';
     const sortOrder =  req.query.sortOrder || 'asc';
@@ -35,7 +36,7 @@ app.get("/api/products", async (req,res) => {
 });
 
 
-app.post("/api/products", async (req,res) => {
+app.post("/api/products", validateInputValues , async (req,res) => {
 
     await Product.create({
         name : req.body.name,
@@ -48,7 +49,7 @@ app.post("/api/products", async (req,res) => {
 });
 
 
-app.put('/api/products/:productId',async (req,res)=>{
+app.put('/api/products/:productId', validateInputValues , async (req,res)=>{
 
     const productId = req.params.productId;
     const product = await Product.findOne({
