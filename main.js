@@ -3,26 +3,37 @@ const cors = require("cors");
 const app = express();
 const port = 3000; 
 
+const {Op} = require('sequelize')
 const { sequelize, Product } = require('./models');
 const migrationhelper = require('./migrationhelper');
-const { validateInputValues } = require("./validators/inputValidator");
+const { validateInputValues } = require("./validators/inputValidator.js");
+const { check } = require("express-validator");
 
 app.use(express.json());
 app.use(cors());
 
 
-app.get("/api/products",async (req,res) => {
+app.get("/api/products", check("q").escape(), async (req,res) => {
 
-    const sortCol =  req.query.sortCol || 'name';
-    const sortOrder =  req.query.sortOrder || 'asc';
-
-    let products = await Product.findAll({
+    let sortCol = req.query.sortCol || 'id';
+    let sortOrder = req.query.sortOrder || 'asc';
+    let offset = Number(req.query.offset || 0);
+    let limit = Number(req.query.limit || 5);
+    const products = await Product.findAndCountAll({
+        where:{
+            name:{
+                [Op.like]: '%' + req.query.q + '%'
+            }
+        },
         order: [ 
             [sortCol, sortOrder]
-        ]
+        ],
+        offset: offset,
+        limit:limit
     });
         
-    const result = products.map (p=> {
+    const total = products.count
+    const result = products.rows.map(p=>{
         return {
         id:p.id,
         name:p.name,
@@ -32,7 +43,10 @@ app.get("/api/products",async (req,res) => {
         };
     });
   
-    return res.json(result);
+    return res.json({
+        total,
+        result
+    });
 });
 
 

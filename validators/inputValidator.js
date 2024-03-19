@@ -1,4 +1,4 @@
-const { check } = require("express-validator");
+const { check, validationResult } = require("express-validator");
 
 const validateInputValues = [
     check('name')
@@ -6,17 +6,26 @@ const validateInputValues = [
       .trim()
       .not()
       .isEmpty()
-      .withMessage('Empty  product name!'),
+      .withMessage('Empty product name!'),
     check('brand')
+      .escape()
       .trim()
-      .escape(),
+      .not()
+      .isEmpty()
+      .withMessage('Empty brand!'),
     check('price')
-      .escape(),
+      .escape()
+      .not()
+      .isEmpty()
+      .withMessage('Empty price!'),
     check('rating')
-      .escape(),
+      .escape()
+      .not()
+      .isEmpty()
+      .withMessage('Empty rating!'),
   
     (req, res, next) => {
-      const errors = validateInputValues(req);
+      const errors = validationResult(req);
       if (!errors.isEmpty())
         return res.status(422).json({errors: errors.array()});
       next();
